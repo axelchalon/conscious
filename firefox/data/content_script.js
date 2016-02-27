@@ -49,8 +49,15 @@ else // firefox
 					setTimeout(function() { callback(result) }, 1);
 				},
 				set: function (values, callback) {
-					// loaded_prefs = merge_objects(loaded_prefs,values);
+
+					// update the preferences storage
+					// NB: we must update the keys of the preferences object one-by-one, otherwise it breaks the link with the Extension Options UI.
 					self.port.emit("update-prefs", values);
+					
+					// update the preferences on the side of the content script
+					for (var attrname in values)
+						loaded_prefs[attrname] = values[attrname];
+					
 					setTimeout(callback, 1);
 				}
 			};
