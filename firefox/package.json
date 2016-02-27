@@ -1,0 +1,77 @@
+{  
+   "title":"Conscious",
+   "name":"conscious",
+   "id":"consciousaxelchalon",
+   "version":"2.0.0",
+   "description":"Displays how many times you've visited Facebook today and/or hides the news feed. Stay conscious.",
+   "main":"main.js",
+   "author":"Axel Chalon",
+   "engines":{  
+      "firefox":">=38.0a1",
+      "fennec":">=38.0a1"
+   },
+   "license":"GPLv3",
+   "keywords":[  
+      "productivity",
+      "facebook",
+      "conscious",
+      "counter",
+      "visit",
+      "aware"
+   ],
+   "preferences":[  
+      {  
+         "name":"newsFeed",
+         "title":"News feed",
+         "type":"menulist",
+         "value":"normal",
+         "options":[  
+            {  
+               "value":"normal",
+               "label":"Show"
+            },
+            {  
+               "value":"kill",
+               "label":"Hide"
+            }
+         ]
+      },
+      {  
+         "title":"Display the amount of times you've visited Facebook today",
+         "name":"message",
+         "type":"menulist",
+         "value":"show",
+         "options":[  
+            {  
+               "value":"show",
+               "label":"Yes"
+            },
+            {  
+               "value":"hide",
+               "label":"No"
+            }
+         ]
+      },
+      {  
+         "title":"Custom message",
+         "description":"%s will be replaced by the amount of visits today; leave empty for default message",
+         "name":"messageContent",
+         "type":"string",
+         "value":"You've visited Facebook %s times today."
+      },
+      {  
+         "title":"Max amount of visits per day",
+         "description":"Set to -1 for no limit",
+         "type":"string",
+         "name":"maxVisits",
+         "value": "-1"
+      },
+      {  
+         "title":"Custom message when the daily limit is reached",
+         "description":"Leave empty for default message",
+         "name":"maxVisitsMessage",
+         "type":"string",
+         "value":"You've visited Facebook a lot of times today. Why not move on to something else now?"
+      }
+   ]
+}

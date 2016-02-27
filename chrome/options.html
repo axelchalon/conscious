@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head><title>Options</title>
+<meta charset="utf-8">
+<style>
+	html, body, div, span, applet, object, iframe,
+	h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+	a, abbr, acronym, address, big, cite, code,
+	del, dfn, em, img, ins, kbd, q, s, samp,
+	small, strike, strong, sub, sup, tt, var,
+	b, u, i, center,
+	dl, dt, dd, ol, ul, li,
+	fieldset, form, label, legend,
+	table, caption, tbody, tfoot, thead, tr, th, td,
+	article, aside, canvas, details, embed, 
+	figure, figcaption, footer, header, hgroup, 
+	menu, nav, output, ruby, section, summary,
+	time, mark, audio, video {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		font-size: 100%;
+		font: inherit;
+		vertical-align: baseline;
+	}
+	/* HTML5 display-role reset for older browsers */
+	article, aside, details, figcaption, figure, 
+	footer, header, hgroup, menu, nav, section {
+		display: block;
+	}
+	body {
+		line-height: 1;
+	}
+	ol, ul {
+		list-style: none;
+	}
+	blockquote, q {
+		quotes: none;
+	}
+	blockquote:before, blockquote:after,
+	q:before, q:after {
+		content: '';
+		content: none;
+	}
+	table {
+		border-collapse: collapse;
+		border-spacing: 0;
+	}
+    
+	body { font-family: "Trebuchet MS", "Verdana", sans-serif; }
+	h1 { font-size: 30px; margin-bottom: 5px; }
+	h2 { font-size: 20px; }
+	h1, h2 { text-align: center; }
+	div.guide { margin-top: 8px; }
+	div.guide img { width: 33%; }
+	
+    body { padding: 20px 100px; }
+	form { margin-top: 50px; }
+    form > * { display: block; margin-bottom: 20px; }
+    
+    p#footer { color: gray; position: fixed; right: 5px; bottom: 5px; }
+    
+    fieldset > * { display: block; margin-bottom: 10px; }
+    fieldset { border: 1px solid black; }
+    fieldset legend, body > label { font-weight: bold; }
+	
+	em { font-style: italic; }
+	
+	#save { width: 100%; height: 70px; font-size: 60px; line-height: 60px; vertical-align: middle; }
+	code { font-family: monospace; }
+	
+	input { margin-left: 0; vertical-align: middle; }
+	fieldset { padding-top: 20px; }
+	label { padding-left: 0; vertical-align: middle; }
+	
+	legend { margin: auto; }
+	label { width: 50%; text-align: right; display: inline-block; }
+	input { display: inline-block; font-size: 12px; }
+</style>
+</head>
+<body>
+  
+  <h1>Conscious &mdash; Options page</h1>
+   
+  <h2>You can access this page anytime by going to the Extensions page and clicking "Options" below <em>Conscious</em>.</h2>
+  
+  <div class="guide">
+  	<img src="options1.png">
+  	<img src="options2.png">
+  	<img src="options3.png">
+  	
+  </div>
+   
+    <form>
+
+		<fieldset>
+			<legend>Settings</legend>
+
+			<label>
+				Hide news feed
+			</label>
+			<input type="checkbox" name="newsfeed" value="newsfeed_kill" id="newsfeed_kill">
+			<br>
+			<br>
+
+			<label>
+				Display the amount of times you've visited Facebook today
+			</label>
+			<input type="checkbox" name="message" value="message_show" id="message_show">
+			<br>
+			<br>
+
+			<label>
+				Custom message<br>
+				<span style="font-size: 12px;">(<code>%s</code> will be replaced by the amount of visits today ; leave empty for default message)</span>
+			</label>
+			<input type="text" name="message_content" placeholder="You've visited Facebook %s times today." style="width: 45%;" id="message_content">
+			<br>
+			<br>
+
+			<label>
+				Max amount of visits per day<br>
+				<span style="font-size: 12px;">(leave empty for no limit)</span>
+			</label>
+			<input type="number" name="max_visits" placeholder="No limit" id="max_visits" style="width: 80px;">
+			<br>
+			<br>
+			
+			<label>
+				Custom message when daily limit reached<br>
+				<span style="font-size: 12px;">(leave empty for default message)</span>
+			</label>
+			<input type="text" name="max_visits_message" placeholder="You've visited Facebook over X times today. Why not move on to something else now?" style="width: 45%;" id="max_visits_message">
+			<br>
+			<br>
+
+		</fieldset>
+
+        <button id="save" type="button">Save</button>
+    </form>
+   
+	<p id="footer">Made by <a href="http://axelchalon.fr">Axel Chalon</a></p>
+   
+    <script type="text/javascript" src="options.js"></script>
+</body>
+</html>
