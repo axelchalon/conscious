@@ -1,12 +1,5 @@
 // ### UTILS ###
 
-function merge_objects(obj1,obj2){
-    var obj3 = {};
-    for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
-    for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
-    return obj3;
-}
-
 function hydrate_defaults(defaults,store){
     var result = {};
 	
@@ -49,16 +42,15 @@ else // firefox
 	var prefs, storage;
 	
 	self.port.on("prefs", function (loaded_prefs) {
-		self.port.on("storage", function (loaded_storage) {
-			
+		// self.port.on("storage", function (loaded_storage) {
 			storage = {
 				get: function (defaults, callback) {
-					var result = hydrate_defaults(defaults,loaded_storage);
+					var result = hydrate_defaults(defaults,loaded_prefs);
 					setTimeout(function() { callback(result) }, 1);
 				},
 				set: function (values, callback) {
-					loaded_storage = merge_objects(loaded_storage,values);
-					self.port.emit("rebuild-storage", loaded_storage);
+					// loaded_prefs = merge_objects(loaded_prefs,values);
+					self.port.emit("update-prefs", values);
 					setTimeout(callback, 1);
 				}
 			};
@@ -75,7 +67,7 @@ else // firefox
 			};
 			
 			launch();
-		});
+		// });
 	});
 
 }

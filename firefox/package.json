@@ -1,7 +1,7 @@
 {  
    "title":"Conscious",
    "name":"conscious",
-   "id":"consciousaxelchalon",
+   "id":"conscious@axelchalon.fr",
    "version":"2.0.0",
    "description":"Displays how many times you've visited Facebook today and/or hides the news feed. Stay conscious.",
    "main":"main.js",
@@ -72,6 +72,19 @@
          "name":"maxVisitsMessage",
          "type":"string",
          "value":"You've visited Facebook a lot of times today. Why not move on to something else now?"
+      },
+      {  
+         "title":"Visit count",
+         "name":"count",
+         "type":"integer",
+		 "hidden": true,
+         "value": 0
+      },
+      {  
+         "title":"Last update",
+         "name":"lastUpdate",
+         "type":"string",
+		 "hidden": true
       }
    ]
 }
