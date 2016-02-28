@@ -1,6 +1,8 @@
-'use strict';
-
 // ### UTILS ###
+
+function debug() {
+	// console.log.apply(console,arguments);
+}
 
 function hydrate_defaults(defaults,store){
     var result = {};
@@ -47,12 +49,14 @@ else // firefox
 
 			self.port.once("prefs", function (prefs) {
 				var result = hydrate_defaults(defaults,prefs);
+				debug('storage.get', result);
 				callback(result);
 			});
 		},
 		set: function (values, callback) {
 			// update the preferences storage
 			// NB: we must update the keys of the preferences object one-by-one, otherwise it breaks the link with the Extension Options UI.
+			debug('storage.set', values);
 			self.port.emit("update-prefs", values);
 				
 			setTimeout(callback, 1);
@@ -102,6 +106,8 @@ function updateStorageAndDisplay(sheet, new_count, new_date, show_message, messa
 			else // user-defined message
 				message_content = message_content.replace(/%s/g, new_count);
 
+			debug('updateStorageAndDisplay:showMessage:count', new_count);
+			
 			sheet.addRule('#pagelet_composer::after', 'content: "' + message_content.replace(/"/g, '\\"') + '"; font-size: 20px; margin-top: 30px; margin-bottom: 30px; text-align: center; display: block; font-family: "Helvetica Neue", Helvetica, Arial, "lucida grande", tahoma, verdana, arial, sans-serif;');
 		}
 	});
@@ -109,7 +115,10 @@ function updateStorageAndDisplay(sheet, new_count, new_date, show_message, messa
 
 // ### SCRIPT START FUNCTION / ENTRY POINT ###
 
+debug('content_script');
 function launch() {
+	debug('launch');
+	
 	prefs.get({ // get config
 		newsFeed: 'normal',
 		message: 'show',
@@ -150,20 +159,49 @@ function launch() {
 			count: 0,
 			lastUpdate: getCurrentDate()
 		}, function (countInfo) {
-			// update if HOMEAGE or OTHER PAGE BUT NOT A LINK OPENED FROM FACEBOOK
-			if (isFbHomepage(window.location.href) || !/^https?:\/\/(?:www\.)?facebook\.com/.test(document.referrer)) {
+			// "https://www.facebook.com/john.smith?__pc=EXP1%3ADEFAULT&ajaxpipe=1&ajaxpipe_token=AXhb2Eiyl6u96WKs&quickling[version]=2203060%3B0%3B&__user=100003143196078&__a=1&__dyn=aKTyAW8-aloAwmgDDzbGyai8AolzkHyXoOUK8GAEG8Vpt9LFGFoPJpu5urmiWGEG5V8Z6VEChyd1eFF98izU-q6VGwwyKbQu49B88VFUG5ZKeKmhQKVWxeUlAxvHx2EydDDxeaDDh9oS6rCz9qBh8CcDxvz8Gicx2WBQcGl2S&__req=jsonp_5&__rev=2203060&__adt=5" redirects to "https://www.facebook.com/john.smith" with no referrer ; in that case, we want to ignore the visit to the latter page
+			
+			var ignore_this_page = false;
+			
+			var will_redirect_to_same_page_with_no_referrer = /&ajax/.test(window.location.href);
+			if (will_redirect_to_same_page_with_no_referrer)
+			{
+				localStorage['conscious_pageToIgnore'] = window.location.href.substr(0,window.location.href.indexOf('?'));
+				debug('pageLoad:storePageToIgnore:pageToIgnore', localStorage['conscious_pageToIgnore']);
+			}
+			else
+			{
+				ignore_this_page = localStorage['conscious_pageToIgnore'] && window.location.href.indexOf(localStorage['conscious_pageToIgnore']) === 0; //  pageToIgnore is profile; location.href might be profile?arg
+				debug('pageLoad:pageToIgnore',localStorage['conscious_pageToIgnore']);
+			}
+			
+			if (ignore_this_page)
+			{
+				debug('pageLoad:pageIgnored!');
+				localStorage['conscious_pageToIgnore'] = false;
+			}
+			
+			// add to visit counter if homepage or other page but not coming from facebook
+			if (!/facebook.com\/ajax/.test(window.location.href) && !will_redirect_to_same_page_with_no_referrer && !ignore_this_page && (isFbHomepage(window.location.href) || !/^https?:\/\/(?:www\.)?facebook\.com/.test(document.referrer))) {
 				if (countInfo.lastUpdate == getCurrentDate())
 					var newCount = countInfo.count + 1;
 				else
 					var newCount = 1
 
 				var newDate = getCurrentDate();
+				debug('pageLoad:+1');
 			} else {
 				var newCount = countInfo.count;
 				var newDate = countInfo.lastUpdate;
 				// Technically we only have to call "andDisplay" from here; updateStorage is unnecessary
+				debug('pageLoad:+0');
 			}
 
+			debug('pageLoad:isFbHomepage', isFbHomepage(window.location.href));
+			debug('pageLoad:notFbReferred', !/^https?:\/\/(?:www\.)?facebook\.com/.test(document.referrer));
+			debug('pageLoad:locationHref', window.location.href);
+			debug('pageLoad:referrer', document.referrer);
+			
 			updateStorageAndDisplay(sheet, newCount, newDate, config.message === 'show', config.messageContent, config.maxVisits, config.maxVisitsMessage);
 		});		
 
@@ -190,6 +228,7 @@ function launch() {
 						else
 							var newCount = 1
 
+						debug('pushState:newCount', newCount);
 						updateStorageAndDisplay(sheet, newCount, getCurrentDate(), config.message === 'show', config.messageContent, config.maxVisits, config.maxVisitsMessage);
 					});
 				}
