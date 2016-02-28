@@ -1,3 +1,5 @@
+'use strict';
+
 // ### UTILS ###
 
 function hydrate_defaults(defaults,store){
@@ -38,44 +40,42 @@ if (typeof chrome !== 'undefined' && typeof chrome.storage !== 'undefined') // c
 	launch();
 }
 else // firefox
-{	
-	var prefs, storage;
-	
-	self.port.on("prefs", function (loaded_prefs) {
-		// self.port.on("storage", function (loaded_storage) {
-			storage = {
-				get: function (defaults, callback) {
-					var result = hydrate_defaults(defaults,loaded_prefs);
-					setTimeout(function() { callback(result) }, 1);
-				},
-				set: function (values, callback) {
+{
+	var storage = {
+		get: function (defaults, callback) {
+			self.port.emit("get-prefs");
 
-					// update the preferences storage
-					// NB: we must update the keys of the preferences object one-by-one, otherwise it breaks the link with the Extension Options UI.
-					self.port.emit("update-prefs", values);
-					
-					// update the preferences on the side of the content script
-					for (var attrname in values)
-						loaded_prefs[attrname] = values[attrname];
-					
-					setTimeout(callback, 1);
-				}
-			};
+			self.port.once("prefs", function (prefs) {
+				var result = hydrate_defaults(defaults,prefs);
+				callback(result);
+			});
+		},
+		set: function (values, callback) {
+			// update the preferences storage
+			// NB: we must update the keys of the preferences object one-by-one, otherwise it breaks the link with the Extension Options UI.
+			self.port.emit("update-prefs", values);
+				
+			setTimeout(callback, 1);
+		}
+	};
 
-			prefs = {
-				get: function (defaults, callback) {
-					var result = hydrate_defaults(defaults,loaded_prefs);
-					
-					if ('maxVisits' in result && typeof result['maxVisits'] !== 'undefined')
-						result['maxVisits'] = parseInt(result['maxVisits']); // firefox prefs won't save -1 as an int
-					
-					setTimeout(function() { callback(result) }, 1);
-				}
-			};
-			
-			launch();
-		// });
-	});
+	var prefs = {
+		get: function (defaults, callback) {
+			self.port.emit("get-prefs");
+
+			self.port.once("prefs", function (prefs) {
+
+				var result = hydrate_defaults(defaults,prefs);
+
+				if ('maxVisits' in result && typeof result['maxVisits'] !== 'undefined')
+					result['maxVisits'] = parseInt(result['maxVisits']); // firefox prefs won't save -1 as an int
+
+				callback(result);
+			});
+		}
+	};
+
+	launch();
 
 }
 
@@ -119,7 +119,7 @@ function launch() {
 	}, function (config) {
 
 		// Create style sheet
-		sheet = (function () {
+		var sheet = (function () {
 			var style = document.createElement("style"); // Create the <style> tag
 			style.setAttribute("media", "screen") // Add a media (and/or media query) here if you'd like!   
 			style.appendChild(document.createTextNode("")); // WebKit hack :(

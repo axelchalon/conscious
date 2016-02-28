@@ -16,9 +16,12 @@ pageMod.PageMod({
 			});*/
 		
 			worker.port.on("update-prefs", function (new_prefs) {
-				console.log('update prefs');
 				for (var attrname in new_prefs)
 						prefs[attrname] = new_prefs[attrname];
+			});
+		
+			worker.port.on("get-prefs", function () {
+				worker.port.emit('prefs', prefs)
 			});
 		}
 });
