@@ -1,8 +1,7 @@
 var pageMod = require("sdk/page-mod");
 var data = require("sdk/self").data;
-
-// var storage = require("sdk/simple-storage").storage;
 var prefs = require("sdk/simple-prefs").prefs;
+let {Cc, Ci} = require('chrome');
 
 pageMod.PageMod({
 	include: "*.facebook.com",
@@ -10,10 +9,6 @@ pageMod.PageMod({
 	contentScriptFile: data.url("content_script.js"),
 	onAttach: function (worker) {
 			worker.port.emit("prefs", prefs);
-		
-/*			worker.port.on("rebuild-storage", function (new_storage) {
-				storage = new_storage;
-			});*/
 		
 			worker.port.on("update-prefs", function (new_prefs) {
 				for (var attrname in new_prefs)
@@ -25,3 +20,14 @@ pageMod.PageMod({
 			});
 		}
 });
+
+
+exports.onUnload = function(reason) {
+	if (reason == 'disable')
+	{
+		var ffpref = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+		// ffpref.clearUserPref('extensions.conscious@axelchalon.fr.lastUpdate');
+		// ffpref.clearUserPref('extensions.conscious@axelchalon.fr.count');
+		ffpref.deleteBranch('extensions.conscious@axelchalon.fr.');
+	}
+}
