@@ -69,8 +69,7 @@
          "title":"Custom message when the daily limit is reached",
          "description":"Leave empty for default message",
          "name":"maxVisitsMessage",
-         "type":"string",
-         "value":"You've visited Facebook a lot of times today. Why not move on to something else now?"
+         "type":"string"
       },
       {  
          "title":"Visit count",
