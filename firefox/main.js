@@ -6,6 +6,7 @@ let {Cc, Ci} = require('chrome');
 pageMod.PageMod({
 	include: "*.facebook.com",
 	contentScriptWhen: 'start',
+    attachTo: ['top'], // exclude iframes / ajax
 	contentScriptFile: data.url("content_script.js"),
 	onAttach: function (worker) {
 			worker.port.emit("prefs", prefs);
